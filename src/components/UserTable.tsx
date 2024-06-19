@@ -1,39 +1,42 @@
-import { useState } from "react";
 import { User } from "../models/User";
+import { useState, useMemo, useCallback } from "react";
 
 interface UserTableProps {
     users: User[];
 }
 
 export default function UserTable({ users }: UserTableProps) {
-    const [sortedUsers, setSortedUsers] = useState<User[]>(users);
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+    const sortedUsers = useMemo(() => {
+        const sorted = [...users].sort((a, b) => {
+            if (a.name < b.name) return sortDirection === 'asc' ? -1 : 1;
+            if (a.name > b.name) return sortDirection === 'desc' ? 1 : -1;
+            return 0;
+        });
+        return sorted;
+    }, [users, sortDirection]);
 
     const handleSort = () => {
         const newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-        const sorted = [...sortedUsers].sort((a, b) => {
-            if (a.name < b.name) return newDirection === 'asc' ? -1 : 1;
-            if (a.name > b.name) return newDirection === 'asc' ? 1 : -1;
-            return 0;
-        });
-
-        setSortedUsers(sorted);
         setSortDirection(newDirection);
     };
 
-    const arrowUp = <i className='bx bx-up-arrow-alt text-muted'></i>;
-    const arrowDown = <i className='bx bx-down-arrow-alt text-muted'></i>;
+    const memoizedHandleSort = useCallback(handleSort, [sortDirection]);
+    const arrowIcon = sortDirection === 'asc' ? 'bx bx-up-arrow-alt text-muted' : 'bx bx-down-arrow-alt text-muted';
 
     return (
         <table className="table table-hover">
             <thead>
-                <th>ID</th>
-                <th onClick={handleSort} style={{ cursor: 'pointer' }}>
-                    Name {sortDirection === 'asc' ? arrowUp : arrowDown}
-                </th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Phone</th>
+                <tr>
+                    <th>ID</th>
+                    <th onClick={memoizedHandleSort} style={{ cursor: 'pointer' }}>
+                        Name <i className={arrowIcon}></i>
+                    </th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
             </thead>
 
             <tbody>
