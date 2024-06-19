@@ -1,3 +1,4 @@
+import UserTable from "./UserTable";
 import userService from "../services/userService"
 
 export default function UserAdmin() {
@@ -12,11 +13,7 @@ export default function UserAdmin() {
             <h3>User Admin</h3>
             <hr />
 
-            <ul>
-                {data.map(user => (
-                    <li key={user.id}>{user.name}</li>
-                ))}
-            </ul>
+            <UserTable users={data} />
         </section>
     )
 }
