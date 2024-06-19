@@ -37,7 +37,7 @@ export default function UserTable({ users }: UserTableProps) {
                     <th>Email</th>
                     <th>Phone</th>
                 </tr>
-            </thead>
+                </thead>
 
             <tbody>
                 {sortedUsers.map((user: User) => (
