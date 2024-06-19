@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Post } from "../models/Post";
 
 interface PostTableProps {
@@ -6,22 +6,24 @@ interface PostTableProps {
 }
 
 const PostTable = ({ posts }: PostTableProps) => {
-    const [sort, setSort] = useState<'asc' | 'desc'>('asc');
-    const [sortedPosts, setSortedPosts] = useState<Post[]>(posts);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
-    const handleSort = () => {
-        const newSort = sort === 'asc' ? 'desc' : 'asc';
-        const sorted = [...sortedPosts].sort((a, b) => {
-            if (a.id < b.id) return sort === 'asc' ? -1 : 1;
-            if (a.id > b.id) return sort === 'desc' ? 1 : -1;
+    const sortedPosts = useMemo(() => {
+        const sorted = [...posts].sort((a, b) => {
+            if (a.id < b.id) return sortDirection === 'asc' ? -1 : 1;
+            if (a.id > b.id) return sortDirection === 'desc' ? 1 : -1;
             return 0;
         });
+        return sorted;
+    }, [posts, sortDirection])
 
-        setSort(newSort);
-        setSortedPosts(sorted);
+    const handleSort = () => {
+        const newSortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        setSortDirection(newSortDirection);
     }
 
-    const arrowIcon = sort === 'asc' ? "bx bx-up-arrow-alt" : "bx bx-down-arrow-alt";
+    const memoizedHandleSort = useCallback(handleSort, [sortDirection]);
+    const arrowIcon = sortDirection === 'asc' ? "bx bx-up-arrow-alt" : "bx bx-down-arrow-alt";
     
     return (
         <section>
@@ -31,7 +33,7 @@ const PostTable = ({ posts }: PostTableProps) => {
             <table className="table table-hovered">
                 <thead>
                     <tr>
-                        <th onClick={handleSort} style={{ cursor: 'pointer' }}>
+                        <th onClick={memoizedHandleSort} style={{ cursor: 'pointer' }}>
                             ID
                             <i className={arrowIcon} />
                         </th>
