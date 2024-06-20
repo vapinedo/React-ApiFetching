@@ -1,11 +1,9 @@
-import PostAdmin from './components/PostAadmin'
-// import UserAdmin from './components/UserAdmin'
+import UserAdmin from './components/UserAdmin'
 
 function App() {
   return (
     <main className='container my-4'>
-      {/* <UserAdmin /> */}
-      <PostAdmin />
+      <UserAdmin />
     </main>
   )
 }

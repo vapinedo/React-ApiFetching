@@ -3,7 +3,9 @@ import userService from "../services/userService"
 
 export default function UserAdmin() {
 
-    const { data, loading, error } = userService();
+    const { data, loading, error, deleteUser } = userService();
+
+    console.log(data.length);
 
     if (loading) return <p>Loading ...</p>
     if (error) return <p>Error: {error}</p>
@@ -13,7 +15,7 @@ export default function UserAdmin() {
             <h3>User Admin</h3>
             <hr />
 
-            <UserTable users={data} />
+            <UserTable users={data} deleteUser={deleteUser} />
         </section>
     )
 }
