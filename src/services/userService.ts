@@ -1,36 +1,39 @@
 import { useEffect, useState } from "react";
+import { User } from "../models/User";
 
 const endpoint = 'https://jsonplaceholder.typicode.com/users';
 
-export default function userSerice() {
-    const [data, setData] = useState([]);
+export default function userService() {
+    const [data, setData] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch(endpoint);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setData(data);
-
-            } catch (error) {
-                if (error instanceof Error) {
-                    setError(error.message);
-                } else {
-                    setError('An unknow error ocurred');
-                }
-            } finally {
-                setLoading(false);
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(endpoint);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        };
+            const data: User[] = await response.json();
+            setData(data);
 
+        } catch (err) {
+            const error = err instanceof Error ? err.message : 'An unknow error ocurred'; 
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteUser = (id: number) => {
+        const newUsers = [...data].filter((user) => user.id !== id);
+        setData(newUsers);
+    };
+
+    useEffect(() => {
         fetchData();
     }, []);
 
-    return { data, loading, error };
+    return { data, deleteUser, loading, error };
 }

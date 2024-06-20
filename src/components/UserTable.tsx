@@ -3,9 +3,13 @@ import { useState, useMemo, useCallback } from "react";
 
 interface UserTableProps {
     users: User[];
+    deleteUser: (id: number) => void;
 }
 
-export default function UserTable({ users }: UserTableProps) {
+export default function UserTable({ users, deleteUser }: UserTableProps) {
+
+    console.log("UserTable Render...");
+
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     const sortedUsers = useMemo(() => {
@@ -35,7 +39,7 @@ export default function UserTable({ users }: UserTableProps) {
                     </th>
                     <th>Username</th>
                     <th>Email</th>
-                    <th>Phone</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
 
@@ -46,7 +50,11 @@ export default function UserTable({ users }: UserTableProps) {
                         <td>{user.name}</td>
                         <td>{user.username}</td>
                         <td>{user.email}</td>
-                        <td>{user.phone}</td>
+                        <td>
+                            <button onClick={() => deleteUser(user.id)} className="btn btn-danger">
+                            <i className='bx bx-trash-alt'></i>
+                            </button>
+                        </td>
                     </tr>
                 ))}
             </tbody>
